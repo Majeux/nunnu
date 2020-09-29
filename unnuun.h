@@ -4,8 +4,7 @@
 
 #include <cassert>
 #include <random>
-#include <vector>
-#include <algorithm>
+#include <set>
 #include <iostream>
 #include <dbg.h>
 
@@ -14,48 +13,33 @@
 std::random_device  rand_dev;
 std::mt19937        generator(rand_dev());
 
-//max range generator
-std::vector<uint32_t> rand_n_unique(const size_t n) {
-    std::vector<uint32_t> gen;
-    gen.reserve(n);
+std::set<uint32_t> rand_n_unique(const size_t n, size_t min, size_t max) {
+    assert(min < max); assert(n < max - min);
+
+    std::set<uint32_t> gen;
 
     for (size_t i = 0; i < n; i++) {
-        size_t r = generator();
-        size_t offset = std::count_if(
-            gen.begin(), gen.end(),
-            [=] (size_t i) { return i <= r; }
-        );
+        size_t r = min + generator()%(max - min); //TODO min fixen
+        std::cerr << r << "->";
 
-        gen.push_back(r + offset);
-    }
-
-    return gen;
-}
-
-//TODO argument max - generator
-std::vector<uint32_t> rand_n_unique(const size_t n, size_t max) {
-    assert(n < max);
-
-    std::vector<uint32_t> gen;
-    gen.reserve(n);
-
-    for (size_t i = 0; i < n; i++) {
-        size_t r = generator() % max;
-        r = 0;
-        std::cerr << r << " ";
-        if(r != max--) {
-            uint32_t offset = std::count_if(
-                gen.begin(), gen.end(),
-                [=] (size_t x) { std::cerr << x << " <= " << r << ": " << (x <= r) << std::endl; return x <= r; }
-            );
-
-            r += dbg(offset);
+        for(size_t x : gen) {
+            if(x <= r) r++;
+            else break;
         }
 
-        gen.push_back(r);
+        max--;
+
+        std::cerr << r << " | ";
+        gen.insert(r);
     }
     std::cerr << std::endl;
     return gen;
 }
 
-//TODO argument range - generator
+std::set<uint32_t> rand_n_unique(const size_t n) {
+    return rand_n_unique(n, 0, generator.max());
+}
+
+std::set<uint32_t> rand_n_unique(const size_t n, size_t max) {
+    return rand_n_unique(n, 0, max);
+}
