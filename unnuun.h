@@ -6,38 +6,17 @@
 #include <random>
 #include <set>
 #include <iostream>
-#include <dbg.h>
 
 //TODO generic type
-//TODO parametrize rand generator
-std::random_device  rand_dev;
-std::mt19937        generator(rand_dev());
+class Unnuun {
+    private:
+        //TODO parametrize rand generator
+        std::random_device  rand_dev;
+        std::mt19937        generator;
 
-std::set<uint32_t> rand_n_unique(const size_t n, size_t min, size_t max) {
-    assert(min < max); assert(n < max - min);
-
-    std::set<uint32_t> gen;
-
-    for (size_t i = 0; i < n; i++) {
-        size_t r = min + generator()%(max - min);
-
-        for(size_t x : gen) {
-            if(x <= r) r++;
-            else break;
-        }
-
-        max--;
-
-        gen.insert(r);
-    }
-    
-    return gen;
-}
-
-std::set<uint32_t> rand_n_unique(const size_t n) {
-    return rand_n_unique(n, 0, generator.max());
-}
-
-std::set<uint32_t> rand_n_unique(const size_t n, size_t max) {
-    return rand_n_unique(n, 0, max);
-}
+    public:
+        Unnuun();
+        std::set<uint32_t> rand_n_unique(const size_t n);
+        std::set<uint32_t> rand_n_unique(const size_t n, size_t max);
+        std::set<uint32_t> rand_n_unique(const size_t n, size_t min, size_t max);
+};
