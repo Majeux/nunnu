@@ -19,8 +19,7 @@ std::set<uint32_t> rand_n_unique(const size_t n, size_t min, size_t max) {
     std::set<uint32_t> gen;
 
     for (size_t i = 0; i < n; i++) {
-        size_t r = min + generator()%(max - min); //TODO min fixen
-        std::cerr << r << "->";
+        size_t r = min + generator()%(max - min);
 
         for(size_t x : gen) {
             if(x <= r) r++;
@@ -29,10 +28,9 @@ std::set<uint32_t> rand_n_unique(const size_t n, size_t min, size_t max) {
 
         max--;
 
-        std::cerr << r << " | ";
         gen.insert(r);
     }
-    std::cerr << std::endl;
+    
     return gen;
 }
 
