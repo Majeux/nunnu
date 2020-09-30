@@ -21,9 +21,9 @@ class Unnuun {
         std::set<uint32_t> rand_n_unique(const size_t n, size_t max);
         std::set<uint32_t> rand_n_unique(const size_t n, size_t min, size_t max);
 
-        template<typename TF>
-        std::set<uint32_t> rand_n_unique(const size_t n, size_t min, size_t max,
-            TF&& gen_func)
+        template<typename T>
+        static std::set<uint32_t> rand_n_unique(const size_t n, size_t min, size_t max,
+            T gen_func)
         {
             assert(min < max); assert(n < max - min);
 
