@@ -18,8 +18,21 @@ class Unnuun {
 
         template<typename F>
         /*
-            Function that accepts a generic generation function `gen_func`
-            Returns
+            Generates `n` distinct values from [`min`, `max`) obtained from `n` calls to
+            `gen_func`
+            @pre    -   `min` smaller than `max`
+                    -   `n` smaller no. elemnts in [`min`, `max`)
+                    NOTE:   The following preconditions are not checked at compile time
+                            Not meeting them might flood you with errors
+                    -   `gen_func` should be able to return at least `n` distinct values
+                    -   It is recommended that the return type of `gen_func` is an
+                        unsigned integral type.
+                        If not you should firstly pray, secondly make sure that:
+                        *   The return type of `gen_func` should insertable in an std::set
+                        *   The return type of `gen_func` should be comparable using `<=`
+                        *   The return type of `gen_func` should be addable to using `+`
+
+            @post   set with `n` values
         */
         static std::set< typename std::result_of<F()>::type >
             rand_n_unique(const size_t n, size_t min, size_t max, F gen_func)
