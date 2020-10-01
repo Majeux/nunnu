@@ -18,8 +18,8 @@ class Unnuun {
 
         template<typename F>
         /*
-            Generates `n` distinct values from [`min`, `max`) obtained from `n` calls to
-            `gen_func`
+            Generates `n` distinct values from [`min`, `max`)
+            obtained from `n` calls to `gen_func`
             @pre    -   `min` smaller than `max`
                     -   `n` smaller no. elemnts in [`min`, `max`)
                     NOTE:   The following preconditions are not checked at compile time
