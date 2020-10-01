@@ -16,56 +16,6 @@ class Unnuun {
     public:
         Unnuun() : generator(rand_dev()) { }
 
-        /*
-            Generates `n` random numbers in [`min`, `max`)
-            @pre    `min` smaller than `max`
-                    `n` smaller no. elemnts in [`min`, `max`)
-            @post   set with `n` values
-        */
-        std::set<uint_fast32_t> rand_n_unique(const size_t n, size_t min, size_t max)
-        {
-            assert(min < max); assert(n < max - min);
-
-            std::set< uint_fast32_t > gen;
-
-            for (size_t i = 0; i < n; i++) {
-                uint_fast32_t r = min + generator()%(max - min);
-
-                for(uint_fast32_t x : gen) {
-                    if(x <= r) r++;
-                    else break;
-                }
-
-                max--;
-
-                gen.insert(r);
-            }
-
-            return gen;
-        }
-
-        /*
-            Generates `n` unique random numbers in [0, `max`)
-            @pre    `n` smaller no. elemnts in [0, `max`)
-            @post   set with `n` values
-        */
-        std::set<uint_fast32_t> rand_n_unique(const size_t n, size_t max)
-        {
-            return rand_n_unique(n, 0, max);
-        }
-
-        /*
-            Generates `n` unique random numbers in [0, std::mt19937::max)
-            @pre    `n` smaller no. elemnts in [0, std::mt19937::max)
-            @post   set with `n` values
-        */
-        std::set<uint_fast32_t> rand_n_unique(const size_t n)
-        {
-            return rand_n_unique(n, 0, generator.max());
-        }
-
-
-
         template<typename F>
         /*
             Function that accepts a generic generation function `gen_func`
@@ -94,5 +44,36 @@ class Unnuun {
             }
 
             return gen;
+        }
+
+        /*
+            Generates `n` random numbers in [`min`, `max`)
+            @pre    `min` smaller than `max`
+                    `n` smaller no. elemnts in [`min`, `max`)
+            @post   set with `n` values
+        */
+        std::set<uint_fast32_t> rand_n_unique(const size_t n, size_t min, size_t max)
+        {
+            return rand_n_unique(n, min, max, generator);
+        }
+
+        /*
+            Generates `n` unique random numbers in [0, `max`)
+            @pre    `n` smaller no. elemnts in [0, `max`)
+            @post   set with `n` values
+        */
+        std::set<uint_fast32_t> rand_n_unique(const size_t n, size_t max)
+        {
+            return rand_n_unique(n, 0, max);
+        }
+
+        /*
+            Generates `n` unique random numbers in [0, std::mt19937::max)
+            @pre    `n` smaller no. elemnts in [0, std::mt19937::max)
+            @post   set with `n` values
+        */
+        std::set<uint_fast32_t> rand_n_unique(const size_t n)
+        {
+            return rand_n_unique(n, 0, generator.max());
         }
 };
