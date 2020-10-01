@@ -72,7 +72,7 @@ class Unnuun {
                     }
                     else break;
                 }
-                
+
                 max--;
 
                 last = gen.insert(it, r); //`it` is a hint pointing to element after `r`
