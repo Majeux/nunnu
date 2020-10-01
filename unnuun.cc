@@ -4,15 +4,16 @@ Unnuun::Unnuun() : generator(rand_dev()) {
 
 }
 
-std::set<uint32_t> Unnuun::rand_n_unique(const size_t n, size_t min, size_t max) {
+std::set<uint32_t> Unnuun::rand_n_unique(const size_t n, size_t min, size_t max)
+{
     assert(min < max); assert(n < max - min);
 
-    std::set<uint32_t> gen;
+    std::set< uint32_t > gen;
 
     for (size_t i = 0; i < n; i++) {
-        size_t r = min + generator()%(max - min);
+        uint32_t r = min + generator()%(max - min);
 
-        for(size_t x : gen) {
+        for(uint32_t x : gen) {
             if(x <= r) r++;
             else break;
         }

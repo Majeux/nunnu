@@ -20,17 +20,22 @@ class Unnuun {
         std::set<uint32_t> rand_n_unique(const size_t n, size_t min, size_t max);
 
         template<typename F>
-        static std::set< typename std::result_of<F()>::type > //return set of whatever `F gen_func` returns
+        /*
+            Function that accepts a generic generation function `gen_func`
+            Returns
+        */
+        static std::set< typename std::result_of<F()>::type >
             rand_n_unique(const size_t n, size_t min, size_t max, F gen_func)
         {
+            using v_type = typename std::result_of<F()>::type;
             assert(min < max); assert(n < max - min);
 
-            std::set< typename std::result_of<F()>::type > gen;
+            std::set< v_type > gen;
 
             for (size_t i = 0; i < n; i++) {
-                size_t r = min + gen_func()%(max - min);
+                v_type r = min + gen_func()%(max - min);
 
-                for(size_t x : gen) {
+                for(v_type x : gen) {
                     if(x <= r) r++;
                     else break;
                 }
