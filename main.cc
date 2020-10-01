@@ -20,7 +20,7 @@ int main() {
     for(auto i : Unnu::n_unique_from(generator, 4, 100))
         std::cerr << i << " ";
 
-    std::cerr << std::endl;
+    std::cerr << std::endl << "#######" << std::endl;
 
     //Now with default generator
     Unnuun genObj;
