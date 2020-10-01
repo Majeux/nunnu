@@ -7,6 +7,7 @@
 #include <random>
 #include <set>
 #include <iostream>
+#include <dbg.h>
 
 class Unnuun {
     private:
@@ -16,7 +17,6 @@ class Unnuun {
     public:
         Unnuun() : generator(rand_dev()) { }
 
-        template<typename F>
         /*
             Generates `n` distinct values from [`min`, `max`)
             obtained from `n` calls to `gen_func`
@@ -33,27 +33,51 @@ class Unnuun {
                         *   The return type of `gen_func` should be addable to using `+`
 
             @post   set with `n` values
+
+            May be called without an Unnuun object
         */
+        template<typename F>
         static std::set< typename std::result_of<F()>::type >
-            rand_n_unique(const size_t n, size_t min, size_t max, F gen_func)
+            rand_n_unique( const size_t n, size_t min, size_t max, F gen_func )
         {
             assert(min < max); assert(n < max - min);
 
+            //use type of whatever `gen_func` returns
             using v_type = typename std::result_of<F()>::type;
 
             std::set< v_type > gen;
 
+            // track last known isertion to shorten the next search range
+            auto last = gen.end();
+            v_type last_value = 0;
+
             for (size_t i = 0; i < n; i++) {
                 v_type r = min + gen_func()%(max - min);
 
-                for(v_type x : gen) {
-                    if(x <= r) r++;
+                auto it = gen.begin(), it_end = gen.end();
+
+                if(last != gen.end()) {
+                    if(last_value > r) // everything `<= r` is in [begin, last]
+                        it_end = last;
+                    else // std::set is ordered, so there is nothing `<= r` in [begin, last]
+                        it = last;                                                      //^
+                }                                                                       //|
+                                                                                        //|
+                // offset `r` by number of found values smaller than it                 //|
+                for(; it != it_end; it++) {                                             //|
+                    if(*it <= r) {                                                      //|
+                        r++;                                                            //|
+                        if(last_value <= r) // r grows such that this need not be true ----
+                            it_end = gen.end();
+                    }
                     else break;
                 }
-
+                
                 max--;
 
-                gen.insert(r);
+                last = gen.insert(it, r); //`it` is a hint pointing to element after `r`
+                last_value = r;
+                assert(gen.size() == i+1); //every value must be unique and inserted
             }
 
             return gen;
@@ -78,7 +102,7 @@ class Unnuun {
         std::set<uint_fast32_t> rand_n_unique(const size_t n, size_t max)
         {
             assert(max <= generator.max());
-            
+
             return rand_n_unique(n, 0, max);
         }
 
