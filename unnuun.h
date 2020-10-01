@@ -77,6 +77,8 @@ class Unnuun {
         */
         std::set<uint_fast32_t> rand_n_unique(const size_t n, size_t max)
         {
+            assert(max <= generator.max());
+            
             return rand_n_unique(n, 0, max);
         }
 
