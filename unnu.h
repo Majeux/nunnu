@@ -1,4 +1,5 @@
 #include <type_traits>
+#include <limits>
 #include <cassert>
 #include <set>
 
@@ -82,7 +83,8 @@ namespace Unnu {
     template<typename F>
     std::set< typename std::result_of<F()>::type > n_unique_from(F generator, const size_t n, size_t max)
     {
-        return n_unique_from(generator, n, {0, max});
+        Range r = {0, max};
+        return n_unique_from(generator, n, r);
     }
 
 };
