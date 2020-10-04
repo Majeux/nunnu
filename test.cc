@@ -71,7 +71,7 @@ int main() {
         1000 out of 100000
         run_vec_alloc:		 4275169
         run_vec_prealloc:	 3101746
-        run_unnu:		 1760139
+        run_unnu:		     1760139
     */
 
     std::cout << n << " out of " << max << std::endl;
