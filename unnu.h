@@ -60,18 +60,37 @@ namespace Unnu {
 
         std::set< generator_return_t > gen;
 
+        // track last known isertion to shorten the next search range
+        auto last = gen.end();
+        generator_return_t last_value = 0;
+
         for (size_t i = 0; i < n; i++) {
             generator_return_t r = range.min + generator()%(range.max - range.min);
 
-            for(generator_return_t x : gen) {
-                if(x <= r) r = r+1;
+            auto it = gen.begin(), it_end = gen.end();
+
+            if(last != gen.end()) {
+                if(last_value > r) // everything `<= r` is in [begin, last]
+                    it_end = last;
+                else // std::set is ordered, so there is nothing `<= r` in [begin, last]
+                    it = last;                                                      //^
+            }                                                                       //|
+                                                                                    //|
+            // offset `r` by number of found values smaller than it                 //|
+            for(; it != it_end; it++) {                                             //|
+                if(*it <= r) {                                                      //|
+                    r++;                                                            //|
+                    if(last_value <= r) // r grows such that this need not be true ----
+                        it_end = gen.end();
+                }
                 else break;
             }
 
             range.max--;
 
-            bool inserted = gen.insert(r).second;
-            assert(inserted && "A duplicate was generated, verify if `generator` can generate enough numbers");
+            last = gen.insert(it, r); //`it` is a hint pointing to element after `r`
+            last_value = r;
+            assert(last == gen.end() && "A duplicate was generated, verify if `generator` can generate enough numbers");
         }
 
         return gen;
