@@ -29,7 +29,7 @@ namespace Unnu {
                 && "CAUSE: Value of `max` does not fit in generator return type!"
             );
             assert(range.min < range.max && "CAUSE: Range \[`min`, `max`) is valid!");
-            assert(n < range.max - range.min && "CAUSE: Cannot generate more numbers than are in range!");
+            assert(n <= range.max - range.min && "CAUSE: Cannot generate more numbers than are in range!");
         }
 
     };
@@ -60,28 +60,30 @@ namespace Unnu {
 
         std::set< generator_return_t > gen;
 
+        auto it = gen.begin();
         // track last known isertion to shorten the next search range
-        auto last = gen.end();
-        generator_return_t last_value = 0;
+        auto                last = gen.end();
+        generator_return_t  last_value = 0;
+        size_t              last_offset = 0; // no. elements smaller than last
 
         for (size_t i = 0; i < n; i++) {
             generator_return_t r = range.min + generator()%(range.max - range.min);
 
-            auto it = gen.begin(), it_end = gen.end();
+            if(last != gen.end() && last_value <= r) {
+                // std::set is ordered, all elements before `last` are smaller
+                it = last;
+                r += last_offset;
+            }
+            else {
+                it = gen.begin();
+                last_offset = 0;
+            }
 
-            if(last != gen.end()) {
-                if(last_value > r) // everything `<= r` is in [begin, last]
-                    it_end = last;
-                else // std::set is ordered, so there is nothing `<= r` in [begin, last]
-                    it = last;                                                      //^
-            }                                                                       //|
-                                                                                    //|
-            // offset `r` by number of found values smaller than it                 //|
-            for(; it != it_end; it++) {                                             //|
-                if(*it <= r) {                                                      //|
-                    r++;                                                            //|
-                    if(last_value <= r) // r grows such that this need not be true ----
-                        it_end = gen.end();
+            // offset `r` by number of found values smaller than it
+            for(; it != gen.end(); it++) {
+                if(*it <= r) {
+                    last_offset++;
+                    r++;
                 }
                 else break;
             }
@@ -90,7 +92,7 @@ namespace Unnu {
 
             last = gen.insert(it, r); //`it` is a hint pointing to element after `r`
             last_value = r;
-            assert(last == gen.end() && "A duplicate was generated, verify if `generator` can generate enough numbers");
+            assert(gen.size() == i+1 && "A duplicate was generated, verify if `generator` can generate enough numbers");
         }
 
         return gen;
