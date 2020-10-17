@@ -18,8 +18,12 @@ auto run_vec_alloc(size_t n, size_t max) {
 
     auto t2 = std::chrono::steady_clock::now();
 
-    for(auto i : v)
+    size_t count = 0;
+    for(auto i : v) {
         std::cerr << i << ' ';
+        if(count++ >= n-1)
+            break;
+    }
 
     return t2-t1;
 }
@@ -35,8 +39,12 @@ auto run_vec_prealloc(size_t n, size_t max) {
 
     auto t2 = std::chrono::steady_clock::now();
 
-    for(auto i : v)
+    size_t count = 0;
+    for(auto i : v) {
         std::cerr << i << ' ';
+        if(count++ >= n-1)
+            break;
+    }
 
     return t2-t1;
 }
@@ -74,18 +82,18 @@ int main() {
         run_unnu:		     1760139
     */
 
+
+    auto t_v = run_vec_alloc(n, max);
+    auto t_vpre = run_vec_prealloc(n, max);
+    auto t_unnu = run_unnu(n, max);
+
     std::cout << n << " out of " << max << std::endl;
+    std::cout << "run_vec_alloc:\t\t " << t_v.count() << std::endl;
+    std::cout << "run_vec_prealloc:\t " << t_vpre.count() << std::endl;
+    std::cout << "run_unnu:\t\t " << t_unnu.count() << std::endl;
 
-    auto t = run_vec_alloc(n, max);
 
-    std::cout << "run_vec_alloc:\t\t " << t.count() << std::endl;
 
-    t = run_vec_prealloc(n, max);
 
-    std::cout << "run_vec_prealloc:\t " << t.count() << std::endl;
-
-  t = run_unnu(n, max);
-
-  std::cout << "run_unnu:\t\t " << t.count() << std::endl;
 
 }
