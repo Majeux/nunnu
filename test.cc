@@ -24,6 +24,7 @@ auto run_vec_alloc(size_t n, size_t max) {
         if(count++ >= n-1)
             break;
     }
+	std:: cerr << std::endl;
 
     return t2-t1;
 }
@@ -45,6 +46,7 @@ auto run_vec_prealloc(size_t n, size_t max) {
         if(count++ >= n-1)
             break;
     }
+	std:: cerr << std::endl;
 
     return t2-t1;
 }
@@ -56,15 +58,18 @@ auto run_unnu(size_t n, size_t max) {
 
     auto t2 = std::chrono::steady_clock::now();
 
-    for(auto i : s)
+    for(auto i : s) {
         std::cerr << i << ' ';
+	}
+	
+	std:: cerr << std::endl;
 
     return t2-t1;
 }
 
 int main() {
     size_t n =   100;
-    size_t max = 100000000;
+    size_t max = 100000;
     /*
         100 out of 100000000
         run_vec_alloc:		 8151040435
