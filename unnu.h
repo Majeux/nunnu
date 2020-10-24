@@ -34,6 +34,34 @@ namespace Unnu {
 
     };
 
+	// original implementation
+	template<typename F>
+    std::set< typename std::result_of<F()>::type >
+        n_unique_from(F generator, const size_t n, Range range)
+    {
+        assert_arguments(generator, n, range);
+
+        using generator_return_t = typename std::result_of<F()>::type;
+
+        std::set< generator_return_t > gen;
+
+        for (size_t i = 0; i < n; i++) {
+            generator_return_t r = range.min + generator()%(range.max - range.min);
+
+            for(generator_return_t x : gen) {
+                if(x <= r) r = r+1;
+                else break;
+            }
+
+            range.max--;
+
+            bool inserted = gen.insert(r).second;
+            assert(inserted && "A duplicate was generated, verify if `generator` can generate enough numbers");
+        }
+
+        return gen;
+    }
+
     /*  n_unique_from
         Generates `n` distinct values from [`min`, `max`) obtained from `n` calls to `generator`
         @param  `generator`:    function/functor that will generate values to be returned
@@ -50,9 +78,10 @@ namespace Unnu {
 
         @post   std::set with `n` distinct values from `generator`
     */
+	// implementation with single element memory
     template<typename F>
     std::set< typename std::result_of<F()>::type >
-        n_unique_from(F generator, const size_t n, Range range)
+        n_unique_fromM(F generator, const size_t n, Range range)
     {
         assert_arguments(generator, n, range);
 
@@ -108,4 +137,10 @@ namespace Unnu {
         return n_unique_from(generator, n, r);
     }
 
+	template<typename F>
+    std::set< typename std::result_of<F()>::type > n_unique_fromM(F generator, const size_t n, size_t max)
+    {
+        Range r = {0, max};
+        return n_unique_fromM(generator, n, r);
+    }
 };

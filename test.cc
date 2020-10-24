@@ -67,6 +67,22 @@ auto run_unnu(size_t n, size_t max) {
     return t2-t1;
 }
 
+auto run_unnuM(size_t n, size_t max) {
+    auto t1 = std::chrono::steady_clock::now();
+
+    std::set<uint_fast32_t> s = Unnu::n_unique_fromM(generator, n, max);
+
+    auto t2 = std::chrono::steady_clock::now();
+
+    for(auto i : s) {
+        std::cerr << i << ' ';
+	}
+	
+	std:: cerr << std::endl;
+
+    return t2-t1;
+}
+
 int main() {
     size_t n =   100;
     size_t max = 100000;
@@ -88,14 +104,16 @@ int main() {
     */
 
 
-    auto t_v = run_vec_alloc(n, max);
-    auto t_vpre = run_vec_prealloc(n, max);
-    auto t_unnu = run_unnu(n, max);
+    auto t_v     = run_vec_alloc(n, max);
+    auto t_vpre  = run_vec_prealloc(n, max);
+    auto t_unnu  = run_unnu(n, max);
+    auto t_unnuM = run_unnuM(n, max);
 
     std::cout << n << " out of " << max << std::endl;
     std::cout << "run_vec_alloc:\t\t " << t_v.count() << std::endl;
     std::cout << "run_vec_prealloc:\t " << t_vpre.count() << std::endl;
     std::cout << "run_unnu:\t\t " << t_unnu.count() << std::endl;
+    std::cout << "run_unnuM:\t\t " << t_unnuM.count() << std::endl;
 
 
 
