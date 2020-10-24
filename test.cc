@@ -14,7 +14,7 @@ auto run_naive(size_t n, size_t max) {
     std::set<uint_fast32_t> s;
 	
 	for(size_t i = 0; i < n; i++) {
-	/*	while( */s.insert(generator()%max);/*.second == false ) { std::cerr << "redo" << std::endl; }*/
+		while( s.insert(generator()%max).second == false ) { }
 	}
 
     auto t2 = std::chrono::steady_clock::now();
@@ -86,10 +86,10 @@ auto run_unnu(size_t n, size_t max) {
     return t2-t1;
 }
 
-auto run_unnuM(size_t n, size_t max) {
+auto run_unnuOLD(size_t n, size_t max) {
     auto t1 = std::chrono::steady_clock::now();
 
-    std::set<uint_fast32_t> s = Unnu::n_unique_fromM(generator, n, max);
+    std::set<uint_fast32_t> s = Unnu::n_unique_fromOLD(generator, n, max);
 
     auto t2 = std::chrono::steady_clock::now();
 
@@ -104,7 +104,7 @@ auto run_unnuM(size_t n, size_t max) {
 
 int main() {
     size_t n =   100;
-    size_t max = 100000000;
+    size_t max = 100000;
     /*
         100 out of 100000000
         run_vec_alloc:		 8151040435
@@ -127,7 +127,7 @@ int main() {
     auto t_v     = run_vec_alloc(n, max);
     auto t_vpre  = run_vec_prealloc(n, max);
     auto t_unnu  = run_unnu(n, max);
-    auto t_unnuM = run_unnuM(n, max);
+    auto t_unnuOLD = run_unnuOLD(n, max);
 
     std::cout << n << " out of " << max << std::endl;
 	std::cout << "run_naive:\t\t " << t_n.count() << std::endl;
@@ -135,5 +135,5 @@ int main() {
     std::cout << "run_vec_alloc:\t\t " << t_v.count() << std::endl;
     std::cout << "run_vec_prealloc:\t " << t_vpre.count() << std::endl;
     std::cout << "run_unnu:\t\t " << t_unnu.count() << std::endl;
-    std::cout << "run_unnuM:\t\t " << t_unnuM.count() << std::endl;
+    std::cout << "run_unnuOLD:\t\t " << t_unnuOLD.count() << std::endl;
 }

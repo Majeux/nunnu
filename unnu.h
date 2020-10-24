@@ -36,10 +36,10 @@ namespace Unnu {
 
     };
 
-	// original implementation
+	// older implementation. Preliminary: worse in most case, sometimes better
 	template<typename F>
     std::set< typename std::result_of<F()>::type >
-        n_unique_from(F generator, const size_t n, Range range)
+        n_unique_fromOLD(F generator, const size_t n, Range range)
     {
         assert_arguments(generator, n, range);
 
@@ -83,7 +83,7 @@ namespace Unnu {
 	// implementation with single element memory
     template<typename F>
     std::set< typename std::result_of<F()>::type >
-        n_unique_fromM(F generator, const size_t n, Range range)
+        n_unique_from(F generator, const size_t n, Range range)
     {
         assert_arguments(generator, n, range);
 
@@ -138,11 +138,11 @@ namespace Unnu {
         Range r = {0, max};
         return n_unique_from(generator, n, r);
     }
-
+    
 	template<typename F>
-    std::set< typename std::result_of<F()>::type > n_unique_fromM(F generator, const size_t n, size_t max)
+    std::set< typename std::result_of<F()>::type > n_unique_fromOLD(F generator, const size_t n, size_t max)
     {
         Range r = {0, max};
-        return n_unique_fromM(generator, n, r);
+        return n_unique_fromOLD(generator, n, r);
     }
 };
