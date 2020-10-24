@@ -8,6 +8,25 @@
 std::random_device  rand_dev;
 std::mt19937        generator(rand_dev());
 
+auto run_naive(size_t n, size_t max) {
+    auto t1 = std::chrono::steady_clock::now();
+
+    std::set<uint_fast32_t> s;
+	
+	for(size_t i = 0; i < n; i++) {
+	/*	while( */s.insert(generator()%max);/*.second == false ) { std::cerr << "redo" << std::endl; }*/
+	}
+
+    auto t2 = std::chrono::steady_clock::now();
+
+    for(auto i : s) {
+        std::cerr << i << ' ';
+    }
+	std:: cerr << std::endl;
+
+    return t2-t1;
+}
+
 auto run_vec_alloc(size_t n, size_t max) {
     auto t1 = std::chrono::steady_clock::now();
 
@@ -85,7 +104,7 @@ auto run_unnuM(size_t n, size_t max) {
 
 int main() {
     size_t n =   100;
-    size_t max = 100000;
+    size_t max = 100000000;
     /*
         100 out of 100000000
         run_vec_alloc:		 8151040435
@@ -104,19 +123,17 @@ int main() {
     */
 
 
+    auto t_n     = run_naive(n, max);
     auto t_v     = run_vec_alloc(n, max);
     auto t_vpre  = run_vec_prealloc(n, max);
     auto t_unnu  = run_unnu(n, max);
     auto t_unnuM = run_unnuM(n, max);
 
     std::cout << n << " out of " << max << std::endl;
+	std::cout << "run_naive:\t\t " << t_n.count() << std::endl;
+	std::cout << "______________" << std::endl;
     std::cout << "run_vec_alloc:\t\t " << t_v.count() << std::endl;
     std::cout << "run_vec_prealloc:\t " << t_vpre.count() << std::endl;
     std::cout << "run_unnu:\t\t " << t_unnu.count() << std::endl;
     std::cout << "run_unnuM:\t\t " << t_unnuM.count() << std::endl;
-
-
-
-
-
 }

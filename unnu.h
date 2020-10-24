@@ -24,10 +24,12 @@ namespace Unnu {
                 std::is_integral< generator_return_t >::value,
                 "CAUSE: The \"generator\" function must return a integral data type."
             );
+
             assert(
                 range.max <= std::numeric_limits< generator_return_t >::max()
                 && "CAUSE: Value of `max` does not fit in generator return type!"
             );
+
             assert(range.min < range.max && "CAUSE: Range \[`min`, `max`) is valid!");
             assert(n <= range.max - range.min && "CAUSE: Cannot generate more numbers than are in range!");
         }
