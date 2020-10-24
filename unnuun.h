@@ -1,7 +1,6 @@
 /*
     Method to generate a random series of Unique Numbers from a Uniform Distribution
 */
-
 #include <type_traits>
 #include <cassert>
 #include <set>

@@ -17,10 +17,10 @@ int main() {
     std::random_device  rand_dev;
     std::mt19937        generator(rand_dev());
 
-    for(auto i : Unnu::n_unique_from(generator, 4, 100))
+    for(auto i : Unnu::n_unique_from(generator, 100, 100000000))
         std::cerr << i << " ";
 
-    std::cerr << std::endl;
+    std::cerr << std::endl << "#######" << std::endl;
 
     //Now with default generator
     Unnuun genObj;

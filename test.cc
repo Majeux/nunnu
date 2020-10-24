@@ -8,6 +8,25 @@
 std::random_device  rand_dev;
 std::mt19937        generator(rand_dev());
 
+auto run_naive(size_t n, size_t max) {
+    auto t1 = std::chrono::steady_clock::now();
+
+    std::set<uint_fast32_t> s;
+	
+	for(size_t i = 0; i < n; i++) {
+	/*	while( */s.insert(generator()%max);/*.second == false ) { std::cerr << "redo" << std::endl; }*/
+	}
+
+    auto t2 = std::chrono::steady_clock::now();
+
+    for(auto i : s) {
+        std::cerr << i << ' ';
+    }
+	std:: cerr << std::endl;
+
+    return t2-t1;
+}
+
 auto run_vec_alloc(size_t n, size_t max) {
     auto t1 = std::chrono::steady_clock::now();
 
@@ -18,8 +37,13 @@ auto run_vec_alloc(size_t n, size_t max) {
 
     auto t2 = std::chrono::steady_clock::now();
 
-    for(auto i : v)
+    size_t count = 0;
+    for(auto i : v) {
         std::cerr << i << ' ';
+        if(count++ >= n-1)
+            break;
+    }
+	std:: cerr << std::endl;
 
     return t2-t1;
 }
@@ -35,8 +59,13 @@ auto run_vec_prealloc(size_t n, size_t max) {
 
     auto t2 = std::chrono::steady_clock::now();
 
-    for(auto i : v)
+    size_t count = 0;
+    for(auto i : v) {
         std::cerr << i << ' ';
+        if(count++ >= n-1)
+            break;
+    }
+	std:: cerr << std::endl;
 
     return t2-t1;
 }
@@ -48,8 +77,27 @@ auto run_unnu(size_t n, size_t max) {
 
     auto t2 = std::chrono::steady_clock::now();
 
-    for(auto i : s)
+    for(auto i : s) {
         std::cerr << i << ' ';
+	}
+	
+	std:: cerr << std::endl;
+
+    return t2-t1;
+}
+
+auto run_unnuM(size_t n, size_t max) {
+    auto t1 = std::chrono::steady_clock::now();
+
+    std::set<uint_fast32_t> s = Unnu::n_unique_fromM(generator, n, max);
+
+    auto t2 = std::chrono::steady_clock::now();
+
+    for(auto i : s) {
+        std::cerr << i << ' ';
+	}
+	
+	std:: cerr << std::endl;
 
     return t2-t1;
 }
@@ -74,18 +122,18 @@ int main() {
         run_unnu:		     1760139
     */
 
+
+    auto t_n     = run_naive(n, max);
+    auto t_v     = run_vec_alloc(n, max);
+    auto t_vpre  = run_vec_prealloc(n, max);
+    auto t_unnu  = run_unnu(n, max);
+    auto t_unnuM = run_unnuM(n, max);
+
     std::cout << n << " out of " << max << std::endl;
-
-    auto t = run_vec_alloc(n, max);
-
-    std::cout << "run_vec_alloc:\t\t " << t.count() << std::endl;
-
-    t = run_vec_prealloc(n, max);
-
-    std::cout << "run_vec_prealloc:\t " << t.count() << std::endl;
-
-  t = run_unnu(n, max);
-
-  std::cout << "run_unnu:\t\t " << t.count() << std::endl;
-
+	std::cout << "run_naive:\t\t " << t_n.count() << std::endl;
+	std::cout << "______________" << std::endl;
+    std::cout << "run_vec_alloc:\t\t " << t_v.count() << std::endl;
+    std::cout << "run_vec_prealloc:\t " << t_vpre.count() << std::endl;
+    std::cout << "run_unnu:\t\t " << t_unnu.count() << std::endl;
+    std::cout << "run_unnuM:\t\t " << t_unnuM.count() << std::endl;
 }
