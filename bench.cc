@@ -30,7 +30,7 @@ bool missing_required_arguments(const cxxopts::ParseResult& result, const ArgLis
 	for(Arg a : required) {
 		if(result[a].count() == 0) {
 			if(!silent)
-				std::cout << "Argument \'" << a << "\' is required but not provided." << std::endl;
+				std::cerr << "Argument \'" << a << "\' is required but not provided." << std::endl;
 
 			missing = true;
 		}
@@ -138,7 +138,7 @@ Duration run_bench(Function f, size_t n, size_t max) {
 			return run_unnu(n, max);
 		case N_FUNCTIONS:
 		default:
-			std::cout << "ERROR: \'" << f_name(f) << "\' is not a valid function, produces invalid results" << std::endl;
+			std::cerr << "ERROR: \'" << f_name(f) << "\' is not a valid function, produces invalid results" << std::endl;
 			return TimeZero;
 	}
 }
@@ -173,7 +173,7 @@ int main(int argc, char** argv) {
 	auto result = cl_options.parse(argc, argv);
 
 	if(result.arguments().size() == 0 || result["help"].as<bool>()) {
-		std::cout << cl_options.help() << std::endl;
+		std::cerr << cl_options.help() << std::endl;
 		return 0;
 	}
 
@@ -181,14 +181,14 @@ int main(int argc, char** argv) {
 		silent = true;
 
 	if(missing_required_arguments(result, {"numbers", "max-value"}, silent)) {
-		std::cout << "ERROR: Missing arguments, terminating." << std::endl;
-		std::cout << cl_options.help() << std::endl;
+		std::cerr << "ERROR: Missing arguments, terminating." << std::endl;
+		std::cerr << cl_options.help() << std::endl;
 		return 1;
 	}
 
 	if(!silent) { 
-		std::cout << "Generating " << n  << " numbers, from [0, " << max << ")" << std::endl;
-		std::cout << "Averaging over " << repetitions << " results." << std::endl << std::endl;
+		std::cerr << "Generating " << n  << " numbers, from [0, " << max << ")" << std::endl;
+		std::cerr << "Averaging over " << repetitions << " results." << std::endl << std::endl;
 	}
 
 	// running benchmarks
@@ -200,6 +200,7 @@ int main(int argc, char** argv) {
 		for(size_t i = 0; i < repetitions; i++) {
 			results[f] += run_bench(static_cast<Function>(f), n, max);	
 		}
+		results[f] /= repetitions;
 	}
 
 	if(silent) {
