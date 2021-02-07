@@ -4,7 +4,8 @@ from multiprocessing import Process, Value
 from typing import List
 from datetime import datetime
 
-BOUND = range(1, 10000, 1000)
+N_BOUND = range(1, 1000, 1)
+MAX_BOUND = range(1, 10000, 1000)
 EXEC  = "./bench"
 SAMPLES = 100 # how many times to run each algorithm to average results over
 
@@ -13,7 +14,7 @@ def loop(samples: int, params: List):
 
     date_string = datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
     with open("./results/{}.result".format(date_string), 'a') as results:
-        results.write("# Sampling = {}\n".format(samples))
+        # results.write("# Sampling = {}\n".format(samples))
 
         for (n, m) in params:
             # Can interrupt with C-c, kills subprocess
@@ -32,7 +33,7 @@ def loop(samples: int, params: List):
 if __name__ == "__main__":
     print("Executing Unnu benchmarks")
 
-    params = [ (n, max) for n in BOUND for max in BOUND if n <= max ]
+    params = [ (n, max) for n in N_BOUND for max in MAX_BOUND if n <= max ]
 
     loop(SAMPLES, params)
 
