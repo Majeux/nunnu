@@ -1,3 +1,6 @@
+#ifndef UNNUUN_H
+#define UNNUUN_H
+
 /*
     Method to generate a random series of Unique Numbers from a Uniform
    Distribution
@@ -51,3 +54,5 @@ public:
     return unnu::n_unique_from(generator, n, {0, generator.max()});
   }
 };
+
+#endif // UNNUUN_H

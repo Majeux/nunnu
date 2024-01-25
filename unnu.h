@@ -1,3 +1,6 @@
+#ifndef UNNU_H
+#define UNNU_H
+
 #include <cassert>
 #include <cstddef> // size_t
 #include <limits>
@@ -19,19 +22,18 @@ namespace unnu
         Verifies if the arguments passed to `n_unique_from` are correct
     */
     template <typename F>
-    void assert_arguments(const F rgen, const size_t n, const Range range)
+    void assert_arguments(const F rgen, const size_t n, const Range bounds)
     {
-      using generator_return_t = typename std::result_of<F()>::type;
-
-      static_assert(std::is_integral<generator_return_t>::value,
+      static_assert(std::is_integral<decltype(F()())>::value,
                     "CAUSE: The \"rgen\" function must return a integral "
                     "data type.");
 
-      assert(range.max <= std::numeric_limits<generator_return_t>::max() &&
+      assert(bounds.max <= std::numeric_limits<decltype(F()())>::max() &&
              "CAUSE: Value of `max` does not fit in rgen return type!");
 
-      assert(range.min < range.max && "CAUSE: Range \[`min`, `max`) is valid!");
-      assert(n <= range.max - range.min &&
+      assert(bounds.min < bounds.max &&
+             "CAUSE: Range \[`min`, `max`) is valid!");
+      assert(n <= bounds.max - bounds.min &&
              "CAUSE: Cannot generate more numbers than are in range!");
     }
 
@@ -39,20 +41,20 @@ namespace unnu
 
   // older implementation. Preliminary: worse in most case, sometimes better
   template <typename F>
-  auto n_unique_fromOLD(F rgen, const size_t n, Range range)
-      -> std::set<decltype(rgen())>
+  auto n_unique_fromOLD(F rgen, const size_t n, Range bounds)
+      -> std::set<decltype(F()())>
   {
-    assert_arguments(rgen, n, range);
+    assert_arguments(rgen, n, bounds);
 
-    using rgen_return_t = decltype(rgen());
+    using integral_t = decltype(F()());
 
-    std::set<rgen_return_t> gen;
+    std::set<integral_t> gen;
 
     for (size_t i = 0; i < n; i++)
     {
-      rgen_return_t r = range.min + rgen() % (range.max - range.min);
+      integral_t r = bounds.min + rgen() % (bounds.max - bounds.min);
 
-      for (rgen_return_t x : gen)
+      for (integral_t x : gen)
       {
         if (x <= r)
           r = r + 1;
@@ -60,7 +62,7 @@ namespace unnu
           break;
       }
 
-      range.max--;
+      bounds.max--;
 
       bool inserted = gen.insert(r).second;
       assert(inserted && "A duplicate was generated, verify if `rgen` can "
@@ -90,24 +92,24 @@ namespace unnu
   */
   // implementation with single element memory
   template <typename F>
-  auto n_unique_from(F rgen, const size_t n, Range range)
-      -> std::set<decltype(rgen())>
+  auto n_unique_from(F rgen, const size_t n, Range bounds)
+      -> std::set<decltype(F()())>
   {
-    assert_arguments(rgen, n, range);
+    assert_arguments(rgen, n, bounds);
 
-    using rgen_return_t = decltype(rgen());
+    using integral_t = decltype(F()());
 
-    std::set<rgen_return_t> gen;
+    std::set<integral_t> gen;
 
     auto it = gen.begin();
     // track last known isertion to shorten the next search range
     auto last = gen.end();
-    rgen_return_t last_value = 0;
+    integral_t last_value = 0;
     size_t last_offset = 0; // no. elements smaller than last
 
     for (size_t i = 0; i < n; i++)
     {
-      rgen_return_t r = range.min + rgen() % (range.max - range.min);
+      integral_t r = bounds.min + rgen() % (bounds.max - bounds.min);
 
       if (last != gen.end() && last_value <= r)
       {
@@ -133,7 +135,7 @@ namespace unnu
           break;
       }
 
-      range.max--;
+      bounds.max--;
 
       last = gen.insert(it, r); //`it` is a hint pointing to element after `r`
       last_value = r;
@@ -164,3 +166,5 @@ namespace unnu
     return n_unique_fromOLD(rgen, n, r);
   }
 }; // namespace unnu
+
+#endif // UNNU_H
