@@ -7,7 +7,8 @@ void testVoid() {}
 
 bool testBool() { return true; }
 
-int main() {
+int main()
+{
   std::random_device rand_dev;
   std::mt19937 generator(rand_dev());
 
