@@ -1,0 +1,13 @@
+Language: Cpp
+
+UseTab: Never
+NamespaceIndentation: All
+TabWidth: 2
+IndentWidth: 2
+
+
+BreakBeforeBraces: Allman
+
+BinPackArguments: false
+BinPackParameters: false
+PackConstructorInitializers: CurrentLine
