@@ -36,3 +36,4 @@ test
 
 # editor
 .clangd
+compile_flags.txt

@@ -1,7 +1,6 @@
-warnings = -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic \
-					 -Wnull-dereference -Wlogical-op -Wduplicated-branches -Wduplicated-cond
+warnings = -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic -Wnull-dereference
 
-g++compile = g++ -O3 -g $(warnings)
+g++compile = clang++ -O3 -g $(warnings)
 
 # targets
 #

@@ -18,7 +18,7 @@ int main()
   std::random_device rand_dev;
   std::mt19937 generator(rand_dev());
 
-  for (auto i : unnu::n_unique_from(generator, 100, 100000000))
+  for (auto i : unnu::n_unique_from(testBool, 100, 100000000))
     std::cerr << i << " ";
 
   // for (auto i : unnu::n_unique_from(testFloat, 100, 100000000))
