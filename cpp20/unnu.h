@@ -49,7 +49,7 @@ namespace unnu
       assert(bounds.min < bounds.max &&
              "CAUSE: Range [`min`, `max`) is valid!");
       assert(n <= bounds.max - bounds.min &&
-             "CAUSE: Cannot generate more numbers than are in range!");
+             "CAUSE: Cannot generate more unique numbers than are in range!");
     }
 
   }; // namespace
@@ -98,11 +98,11 @@ namespace unnu
 
     using integral_t = decltype(rgen());
 
-    std::set<integral_t> gen;
+    std::set<integral_t> generated;
 
-    auto it = gen.begin();
+    auto it = generated.begin();
     // track last known insertion to shorten the next search range
-    auto last = gen.end();
+    auto last = generated.end();
     integral_t last_value = 0;
     size_t last_offset = 0; // no. elements smaller than last
 
@@ -110,7 +110,7 @@ namespace unnu
     {
       integral_t r = bounds.min + rgen() % (bounds.max - bounds.min);
 
-      if (last != gen.end() && last_value <= r)
+      if (last != generated.end() && last_value <= r)
       {
         // std::set is ordered, all elements before `last` are smaller
         it = last;
@@ -118,12 +118,12 @@ namespace unnu
       }
       else
       {
-        it = gen.begin();
+        it = generated.begin();
         last_offset = 0;
       }
 
       // offset `r` by number of found values smaller than it
-      for (; it != gen.end(); it++)
+      for (; it != generated.end(); it++)
       {
         if (*it <= r)
         {
@@ -136,13 +136,14 @@ namespace unnu
 
       bounds.max--;
 
-      last = gen.insert(it, r); //`it` is a hint pointing to element after `r`
+      last = generated.insert(it,
+                              r); //`it` is a hint pointing to element after `r`
       last_value = r;
-      assert(gen.size() == i + 1 && "A duplicate was generated, verify if "
-                                    "`rgen` can generate enough numbers");
+      assert(generated.size() == i + 1 && "Duplicate generated, verify if "
+                                          "`rgen` can generate enough numbers");
     }
 
-    return gen;
+    return generated;
   }
 
   // older implementation. Preliminary: worse in most case, sometimes better
@@ -154,13 +155,13 @@ namespace unnu
 
     using integral_t = decltype(F()());
 
-    std::set<integral_t> gen;
+    std::set<integral_t> generated;
 
     for (size_t i = 0; i < n; i++)
     {
       integral_t r = bounds.min + rgen() % (bounds.max - bounds.min);
 
-      for (integral_t x : gen)
+      for (integral_t x : generated)
       {
         if (x <= r)
           r = r + 1;
@@ -170,12 +171,12 @@ namespace unnu
 
       bounds.max--;
 
-      bool inserted = gen.insert(r).second;
-      assert(inserted && "A duplicate was generated, verify if `rgen` can "
+      bool inserted = generated.insert(r).second;
+      assert(inserted && "Duplicate generated, verify if `rgen` can "
                          "generate enough numbers");
     }
 
-    return gen;
+    return generated;
   }
 
 }; // namespace unnu
