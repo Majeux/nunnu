@@ -5,13 +5,11 @@ g++compile = g++ -O3 -g $(warnings)
 
 # targets
 #
-all: unnuun  test
-
-unnuun:
-	$(g++compile) -o unnuun main.cc
-
 unnuun20:
-	$(g++compile) -o unnuun main.cc
+	$(g++compile) -std=c++20 -o unnuun cpp20/main.cc
+
+unnuun14:
+	$(g++compile) -std=c++14 -o unnuun cpp20/main.cc
 
 test:
 	$(g++compile) -o test test.cc

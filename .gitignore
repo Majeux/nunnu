@@ -33,3 +33,6 @@
 
 unnuun
 test
+
+# editor
+.clangd
