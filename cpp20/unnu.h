@@ -18,10 +18,10 @@ namespace unnu
   concept non_bool = !std::same_as<T, bool>;
 
   template <typename T>
-  concept NumberGenerator = requires(T a) 
+  concept NumberGenerator = requires(T generate) 
   { 
-    { a() } -> std::integral; 
-    { a() } -> non_bool; 
+    { generate() } -> std::integral; 
+    { generate() } -> non_bool; 
   };
   // clang-format on
 
@@ -58,16 +58,14 @@ namespace unnu
       Wrapper for call to n_unique_from that allows passing a maximum value
      instead of a range
   */
-  template <NumberGenerator F>
-  auto n_unique_from(F rgen, const size_t n, size_t max)
+  auto n_unique_from(NumberGenerator auto rgen, const size_t n, size_t max)
       -> std::set<decltype(rgen())>
   {
     Range r = {0, max};
     return n_unique_from(rgen, n, r);
   }
 
-  template <NumberGenerator F>
-  auto n_unique_fromOLD(F rgen, const size_t n, size_t max)
+  auto n_unique_fromOLD(NumberGenerator auto rgen, const size_t n, size_t max)
       -> std::set<decltype(rgen())>
   {
     Range r = {0, max};
@@ -103,7 +101,7 @@ namespace unnu
     std::set<integral_t> gen;
 
     auto it = gen.begin();
-    // track last known isertion to shorten the next search range
+    // track last known insertion to shorten the next search range
     auto last = gen.end();
     integral_t last_value = 0;
     size_t last_offset = 0; // no. elements smaller than last
