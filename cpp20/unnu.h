@@ -10,16 +10,20 @@
 namespace unnu
 {
 
-  // an object that can be called to produce an integral type
+  // an object that can be called to produce an integral number
   // it is up to the user to provide an object that can generate sufficient
   // random numbers
   // clang-format off
+  template <typename T> 
+  concept non_bool = !std::same_as<T, bool>;
+
   template <typename T>
-  concept Generator = requires(T a)
-  {
-    { a() } -> std::integral;
+  concept NumberGenerator = requires(T a) 
+  { 
+    { a() } -> std::integral; 
+    { a() } -> non_bool; 
   };
-  // clang-format oon
+  // clang-format on
 
   struct Range
   {
@@ -33,12 +37,13 @@ namespace unnu
     /*
         Verifies if the arguments passed to `n_unique_from` are correct
     */
-    template <Generator F>
-    void assert_arguments(const F rgen, const size_t n, const Range bounds)
+    void assert_arguments(NumberGenerator auto rgen,
+                          const size_t n,
+                          const Range bounds)
     {
       (void)rgen; // silence unused warning
 
-      assert(bounds.max <= std::numeric_limits<decltype(F()())>::max() &&
+      assert(bounds.max <= std::numeric_limits<decltype(rgen())>::max() &&
              "CAUSE: Value of `max` does not fit in rgen return type!");
 
       assert(bounds.min < bounds.max &&
@@ -48,6 +53,26 @@ namespace unnu
     }
 
   }; // namespace
+
+  /*
+      Wrapper for call to n_unique_from that allows passing a maximum value
+     instead of a range
+  */
+  template <NumberGenerator F>
+  auto n_unique_from(F rgen, const size_t n, size_t max)
+      -> std::set<decltype(rgen())>
+  {
+    Range r = {0, max};
+    return n_unique_from(rgen, n, r);
+  }
+
+  template <NumberGenerator F>
+  auto n_unique_fromOLD(F rgen, const size_t n, size_t max)
+      -> std::set<decltype(rgen())>
+  {
+    Range r = {0, max};
+    return n_unique_fromOLD(rgen, n, r);
+  }
 
   /*  n_unique_from
       Generates `n` distinct values from [`min`, `max`) obtained from `n` calls
@@ -68,13 +93,12 @@ namespace unnu
       @post   std::set with `n` distinct values from `rgen`
   */
   // implementation with single element memory
-  template <Generator F>
-  auto n_unique_from(F rgen, const size_t n, Range bounds)
-      -> std::set<decltype(F()())>
+  auto n_unique_from(NumberGenerator auto rgen, const size_t n, Range bounds)
+      -> std::set<decltype(rgen())>
   {
     assert_arguments(rgen, n, bounds);
 
-    using integral_t = decltype(F()());
+    using integral_t = decltype(rgen());
 
     std::set<integral_t> gen;
 
@@ -124,7 +148,7 @@ namespace unnu
   }
 
   // older implementation. Preliminary: worse in most case, sometimes better
-  template <Generator F>
+  template <NumberGenerator F>
   auto n_unique_fromOLD(F rgen, const size_t n, Range bounds)
       -> std::set<decltype(F()())>
   {
@@ -156,25 +180,6 @@ namespace unnu
     return gen;
   }
 
-  /*
-      Wrapper for call to n_unique_from that allows passing a maximum value
-     instead of a range
-  */
-  template <Generator F>
-  auto n_unique_from(F rgen, const size_t n, size_t max)
-      -> std::set<decltype(rgen())>
-  {
-    Range r = {0, max};
-    return n_unique_from(rgen, n, r);
-  }
-
-  template <Generator F>
-  auto n_unique_fromOLD(F rgen, const size_t n, size_t max)
-      -> std::set<decltype(rgen())>
-  {
-    Range r = {0, max};
-    return n_unique_fromOLD(rgen, n, r);
-  }
 }; // namespace unnu
 
 #endif // UNNU_H
