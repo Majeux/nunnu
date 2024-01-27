@@ -24,6 +24,8 @@ namespace unnu
     template <typename F>
     void assert_arguments(const F rgen, const size_t n, const Range bounds)
     {
+      (void)rgen; // silence unused warning
+
       static_assert(std::is_integral<decltype(F()())>::value,
                     "CAUSE: The \"rgen\" function must return a integral "
                     "data type.");
@@ -32,7 +34,7 @@ namespace unnu
              "CAUSE: Value of `max` does not fit in rgen return type!");
 
       assert(bounds.min < bounds.max &&
-             "CAUSE: Range \[`min`, `max`) is valid!");
+             "CAUSE: Range [`min`, `max`) is valid!");
       assert(n <= bounds.max - bounds.min &&
              "CAUSE: Cannot generate more numbers than are in range!");
     }
