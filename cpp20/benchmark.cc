@@ -139,7 +139,7 @@ Result run_std_sample_prealloc(size_t n, size_t max)
 Result run_nunnu(size_t n, size_t max)
 {
   auto t1 = std::chrono::steady_clock::now();
-  std::set<unsigned long> s = nunnu::n_unique_from(generator, n, max);
+  std::set<unsigned long> s = nunnu::n_unique_numbers(generator, n, max);
   auto t2 = std::chrono::steady_clock::now();
 
   return Result(n, {0, max}, s, t2 - t1);
@@ -148,7 +148,7 @@ Result run_nunnu(size_t n, size_t max)
 Result run_nunnuOLD(size_t n, size_t max)
 {
   auto t1 = std::chrono::steady_clock::now();
-  std::set<unsigned long> s = nunnu::n_unique_fromOLD(generator, n, max);
+  std::set<unsigned long> s = nunnu::n_unique_numbersOLD(generator, n, max);
   auto t2 = std::chrono::steady_clock::now();
 
   return Result(n, {0, max}, s, t2 - t1);
@@ -175,7 +175,7 @@ int main()
   */
 
   std::cout << "generating " << n << " numbers in [0," << max
-            << "]:" << std::endl;
+            << "):" << std::endl;
   std::cout << "================" << std::endl;
 
   Result naive = run_naive(n, max);
@@ -211,4 +211,6 @@ int main()
             << std::endl;
 
   std::cout << "run_nunnuOLD" << std::endl << nunnuOLD.display() << std::endl;
+
+  return 0;
 }

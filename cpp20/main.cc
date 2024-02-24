@@ -55,17 +55,11 @@ int main()
     std::random_device rand_dev;
     std::mt19937 generator(rand_dev());
 
-    for (auto i : unnu::n_unique_from(generator, n_num, {min_num, max_num}))
+    for (auto i : nunnu::n_unique_numbers(generator, n_num, {min_num, max_num}))
       std::cout << i << " ";
 
     std::cout << std::endl << "Done." << std::endl;
   }
-  // Now with default generator
-  // Unnuun genObj;
-  // for (auto i : genObj.rand_n_unique(4, 100))
-  //   std::cerr << i << " ";
-
-  // std::cerr << std::endl;
 
   return 1;
 }

@@ -1,5 +1,5 @@
-#ifndef UNNU_H
-#define UNNU_H
+#ifndef NUNNU_H
+#define NUNNU_H
 
 #include <cassert>
 #include <concepts>
@@ -35,7 +35,7 @@ namespace nunnu
   { // anonymous/private namespace for assertions
 
     /*
-        Verifies if the arguments passed to `n_unique_from` are correct
+        Verifies if the arguments passed to `n_unique_numbers` are correct
     */
     void assert_arguments(NumberGenerator auto rgen,
                           const size_t n,
@@ -55,24 +55,24 @@ namespace nunnu
   }; // namespace
 
   /*
-      Wrapper for call to n_unique_from that allows passing a maximum value
+      Wrapper for call to n_unique_numbers that allows passing a maximum value
      instead of a range
   */
-  auto n_unique_from(NumberGenerator auto rgen, const size_t n, size_t max)
+  auto n_unique_numbers(NumberGenerator auto rgen, const size_t n, size_t max)
       -> std::set<decltype(rgen())>
   {
     Range r = {0, max};
-    return n_unique_from(rgen, n, r);
+    return n_unique_numbers(rgen, n, r);
   }
 
-  auto n_unique_fromOLD(NumberGenerator auto rgen, const size_t n, size_t max)
+  auto n_unique_numbersOLD(NumberGenerator auto rgen, const size_t n, size_t max)
       -> std::set<decltype(rgen())>
   {
     Range r = {0, max};
-    return n_unique_fromOLD(rgen, n, r);
+    return n_unique_numbersOLD(rgen, n, r);
   }
 
-  /*  n_unique_from
+  /*  n_unique_numbers
       Generates `n` distinct values from [`min`, `max`) obtained from `n` calls
      to `rgen`
       @param  `rgen`:   function/functor that will generate random values
@@ -91,7 +91,7 @@ namespace nunnu
       @post   std::set with `n` distinct values from `rgen`
   */
   // implementation with single element memory
-  auto n_unique_from(NumberGenerator auto rgen, const size_t n, Range bounds)
+  auto n_unique_numbers(NumberGenerator auto rgen, const size_t n, Range bounds)
       -> std::set<decltype(rgen())>
   {
     assert_arguments(rgen, n, bounds);
@@ -148,7 +148,7 @@ namespace nunnu
 
   // older implementation. Preliminary: worse in most case, sometimes better
   template <NumberGenerator F>
-  auto n_unique_fromOLD(F rgen, const size_t n, Range bounds)
+  auto n_unique_numbersOLD(F rgen, const size_t n, Range bounds)
       -> std::set<decltype(F()())>
   {
     assert_arguments(rgen, n, bounds);
@@ -179,6 +179,6 @@ namespace nunnu
     return generated;
   }
 
-}; // namespace unnu
+}; // namespace nunnu
 
-#endif // UNNU_H
+#endif // NUNNU_H
