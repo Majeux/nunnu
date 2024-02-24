@@ -31,5 +31,11 @@
 *.out
 *.app
 
-unnuun
-test
+nunnu20
+nunnu14
+benchmark20
+benchmark14
+
+# editor
+.clangd
+compile_flags.txt

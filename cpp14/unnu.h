@@ -1,12 +1,12 @@
-#ifndef UNNU_H
-#define UNNU_H
+#ifndef NUNNU_H
+#define NUNNU_H
 
 #include <cassert>
 #include <cstddef> // size_t
 #include <limits>
 #include <set>
 
-namespace unnu
+namespace nunnu
 {
 
   struct Range
@@ -19,11 +19,13 @@ namespace unnu
   { // anonymous/private namespace for assertions
 
     /*
-        Verifies if the arguments passed to `n_unique_from` are correct
+        Verifies if the arguments passed to `n_unique_numbers` are correct
     */
     template <typename F>
     void assert_arguments(const F rgen, const size_t n, const Range bounds)
     {
+      (void)rgen; // silence unused warning
+
       static_assert(std::is_integral<decltype(F()())>::value,
                     "CAUSE: The \"rgen\" function must return a integral "
                     "data type.");
@@ -32,7 +34,7 @@ namespace unnu
              "CAUSE: Value of `max` does not fit in rgen return type!");
 
       assert(bounds.min < bounds.max &&
-             "CAUSE: Range \[`min`, `max`) is valid!");
+             "CAUSE: Range [`min`, `max`) is valid!");
       assert(n <= bounds.max - bounds.min &&
              "CAUSE: Cannot generate more numbers than are in range!");
     }
@@ -41,7 +43,7 @@ namespace unnu
 
   // older implementation. Preliminary: worse in most case, sometimes better
   template <typename F>
-  auto n_unique_fromOLD(F rgen, const size_t n, Range bounds)
+  auto n_unique_numbersOLD(F rgen, const size_t n, Range bounds)
       -> std::set<decltype(F()())>
   {
     assert_arguments(rgen, n, bounds);
@@ -72,7 +74,7 @@ namespace unnu
     return gen;
   }
 
-  /*  n_unique_from
+  /*  n_unique_numbers
       Generates `n` distinct values from [`min`, `max`) obtained from `n` calls
      to `rgen`
       @param  `rgen`:   function/functor that will generate random values
@@ -92,7 +94,7 @@ namespace unnu
   */
   // implementation with single element memory
   template <typename F>
-  auto n_unique_from(F rgen, const size_t n, Range bounds)
+  auto n_unique_numbers(F rgen, const size_t n, Range bounds)
       -> std::set<decltype(F()())>
   {
     assert_arguments(rgen, n, bounds);
@@ -147,24 +149,24 @@ namespace unnu
   }
 
   /*
-      Wrapper for call to n_unique_from that allows passing a maximum value
+      Wrapper for call to n_unique_numbers that allows passing a maximum value
      instead of a range
   */
   template <typename F>
-  auto n_unique_from(F rgen, const size_t n, size_t max)
+  auto n_unique_numbers(F rgen, const size_t n, size_t max)
       -> std::set<decltype(rgen())>
   {
     Range r = {0, max};
-    return n_unique_from(rgen, n, r);
+    return n_unique_numbers(rgen, n, r);
   }
 
   template <typename F>
-  auto n_unique_fromOLD(F rgen, const size_t n, size_t max)
+  auto n_unique_numbersOLD(F rgen, const size_t n, size_t max)
       -> std::set<decltype(rgen())>
   {
     Range r = {0, max};
-    return n_unique_fromOLD(rgen, n, r);
+    return n_unique_numbersOLD(rgen, n, r);
   }
-}; // namespace unnu
+}; // namespace nunnu
 
-#endif // UNNU_H
+#endif // NUNNU_H
