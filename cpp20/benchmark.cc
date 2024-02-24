@@ -16,8 +16,8 @@ std::mt19937 generator(rand_dev());
 template <typename T>
 concept ULContainter = requires(T container) 
 { 
-  { *container.cbegin() } -> std::same_as<const unsigned long&>; 
-  { *container.cend() } -> std::same_as<const unsigned long&>; 
+  { *container.cbegin() } -> std::same_as<const size_t&>; 
+  { *container.cend() } -> std::same_as<const size_t&>; 
 };
 // clang-format on
 
@@ -26,10 +26,10 @@ class Result
 public:
   Result(size_t n,
          nunnu::Range range,
-         const std::set<unsigned long> &numbers,
+         const std::set<size_t> &numbers,
          std::chrono::duration<double> dt_s)
   {
-    auto in_range = [range](unsigned long num)
+    auto in_range = [range](size_t num)
     { return range.min <= num && num <= range.max; };
 
     generated_n = numbers.size() == n;
@@ -43,10 +43,10 @@ public:
          const ULContainter auto &numbers,
          std::chrono::duration<double> dt_s)
   {
-    auto in_range = [range](unsigned long num)
+    auto in_range = [range](size_t num)
     { return range.min <= num && num <= range.max; };
     // get all unique "numbers"
-    std::set<unsigned long> numbers_set(numbers.cbegin(), numbers.cend());
+    std::set<size_t> numbers_set(numbers.cbegin(), numbers.cend());
 
     generated_n = numbers.size() == n;
     all_unique = numbers_set.size() == n;
@@ -94,7 +94,7 @@ Result run_naive(size_t n, size_t max)
 {
   auto t1 = std::chrono::steady_clock::now();
 
-  std::set<unsigned long> s;
+  std::set<size_t> s;
 
   for (size_t i = 0; i < n; i++)
   {
@@ -110,7 +110,7 @@ Result run_std_sample(size_t n, size_t max)
 {
   auto t1 = std::chrono::steady_clock::now();
 
-  std::vector<unsigned long> v, out;
+  std::vector<size_t> v, out;
   v.reserve(max);
   out.reserve(n);
   for (size_t i = 0; i < max; i++) v.push_back(i);
@@ -124,7 +124,7 @@ Result run_std_sample(size_t n, size_t max)
 
 Result run_std_sample_prealloc(size_t n, size_t max)
 {
-  std::vector<unsigned long> v, out;
+  std::vector<size_t> v, out;
   v.reserve(max);
   out.reserve(n);
   for (size_t i = 0; i < max; i++) v.push_back(i);
@@ -139,7 +139,7 @@ Result run_std_sample_prealloc(size_t n, size_t max)
 Result run_nunnu(size_t n, size_t max)
 {
   auto t1 = std::chrono::steady_clock::now();
-  std::set<unsigned long> s = nunnu::n_unique_numbers(generator, n, max);
+  std::set<size_t> s = nunnu::n_unique_numbers(generator, n, max);
   auto t2 = std::chrono::steady_clock::now();
 
   return Result(n, {0, max}, s, t2 - t1);
@@ -148,31 +148,21 @@ Result run_nunnu(size_t n, size_t max)
 Result run_nunnuOLD(size_t n, size_t max)
 {
   auto t1 = std::chrono::steady_clock::now();
-  std::set<unsigned long> s = nunnu::n_unique_numbersOLD(generator, n, max);
+  std::set<size_t> s = nunnu::n_unique_numbersOLD(generator, n, max);
   auto t2 = std::chrono::steady_clock::now();
 
   return Result(n, {0, max}, s, t2 - t1);
 }
 
-int main()
+int main(int argc, char **argv)
 {
-  size_t n = 100;
-  size_t max = 1000000;
-  /*
-      100 out of 100000000
-      run_vec_alloc:		 8151040435
-      run_vec_prealloc:	 8197613741
-      run_unnu:		     62077
-  */
+  if (argc != 3) {
+    std::cout << "Incorrect number of arguments" << std::endl;
+    return 1;
+  }
 
-  // size_t n =   1000;
-  // size_t max = 100000;
-  /*
-      1000 out of 100000
-      run_vec_alloc:		 4275169
-      run_vec_prealloc:	 3101746
-      run_unnu:		     1760139
-  */
+  size_t n = std::stoul(argv[1]);
+  size_t max = std::stoul(argv[2]);
 
   std::cout << "generating " << n << " numbers in [0," << max
             << "):" << std::endl;
@@ -211,6 +201,13 @@ int main()
             << std::endl;
 
   std::cout << "run_nunnuOLD" << std::endl << nunnuOLD.display() << std::endl;
+
+  /* Preliminary results
+   * nunnu works best for low n and high |range|
+   * and when max is very low
+   *
+   * sample works best when n is close to |range|
+   */
 
   return 0;
 }
