@@ -7,7 +7,7 @@
 #include <limits>
 #include <set>
 
-namespace unnu
+namespace nunnu
 {
 
   // an object that can be called to produce an integral number

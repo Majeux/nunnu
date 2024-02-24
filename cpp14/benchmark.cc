@@ -9,7 +9,7 @@
 std::random_device rand_dev;
 std::mt19937 generator(rand_dev());
 
-auto run_naive(size_t n, size_t max)
+auto run_sample(size_t n, size_t max)
 {
   auto t1 = std::chrono::steady_clock::now();
 
@@ -27,7 +27,7 @@ auto run_naive(size_t n, size_t max)
   return t2 - t1;
 }
 
-auto run_vec_alloc(size_t n, size_t max)
+auto run_sample(size_t n, size_t max)
 {
   auto t1 = std::chrono::steady_clock::now();
 
@@ -43,7 +43,7 @@ auto run_vec_alloc(size_t n, size_t max)
   return t2 - t1;
 }
 
-auto run_vec_prealloc(size_t n, size_t max)
+auto run_sample_prealloc(size_t n, size_t max)
 {
   std::vector<uint_fast32_t> v;
   v.reserve(n);
@@ -96,9 +96,9 @@ int main()
       run_unnu:		     1760139
   */
 
-  auto t_n = run_naive(n, max);
-  auto t_v = run_vec_alloc(n, max);
-  auto t_vpre = run_vec_prealloc(n, max);
+  auto t_n = run_sample(n, max);
+  auto t_v = run_sample(n, max);
+  auto t_vpre = run_sample_prealloc(n, max);
   auto t_unnu = run_unnu(n, max);
   auto t_unnuOLD = run_unnuOLD(n, max);
 
