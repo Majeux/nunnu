@@ -1,6 +1,6 @@
 warnings = -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic -Wnull-dereference
 
-g++compile = clang++ -O3 -g $(warnings)
+g++compile = g++ -O3 -g $(warnings)
 
 # targets
 #
